@@ -1,8 +1,10 @@
 ####  Makefile for compilation on Linux  ####
 
 OPT=-O3     # Optimization option by default
+TARGET=-s WASM=1
+GENERIC=TRUE
 
-CC=clang
+CC=emcc
 ifeq "$(CC)" "gcc"
     COMPILER=gcc
 else ifeq "$(CC)" "clang"
@@ -18,6 +20,7 @@ else ifeq "$(ARCH)" "ARM"
 else ifeq "$(ARCH)" "ARM64"
     ARCHITECTURE=_ARM64_
 endif
+ARCHITECTURE=_WASM_ # HOTFIX
 
 ADDITIONAL_SETTINGS=
 ifeq "$(SET)" "EXTENDED"
@@ -27,6 +30,7 @@ endif
 ifeq "$(GENERIC)" "TRUE"
     USE_GENERIC=-D _GENERIC_
 endif
+USE_GENERIC=-D _GENERIC_ # HOTFIX
 
 ifeq "$(ARCH)" "ARM"
     ARM_SETTING=-lrt
@@ -58,10 +62,10 @@ OBJECTS_ALL=$(OBJECTS) $(OBJECTS_ARITH_TEST) $(OBJECTS_KEX_TEST)
 all: arith_test kex_test
 
 kex_test: $(OBJECTS_KEX_TEST)
-	$(CC) -o kex_test $(OBJECTS_KEX_TEST) $(ARM_SETTING)
+	$(CC) -o web/kex_test.html $(OBJECTS_KEX_TEST) $(ARM_SETTING) $(TARGET)
 
 arith_test: $(OBJECTS_ARITH_TEST)
-	$(CC) -o arith_test $(OBJECTS_ARITH_TEST) $(ARM_SETTING)
+	$(CC) -o web/arith_test.html $(OBJECTS_ARITH_TEST) $(ARM_SETTING) $(TARGET)
 
 kex.o: kex.c SIDH_internal.h
 	$(CC) $(CFLAGS) kex.c
@@ -110,5 +114,5 @@ kex_tests.o: tests/kex_tests.c SIDH.h
 .PHONY: clean
 
 clean:
-	rm -f arith_test kex_test fp_generic.o fp_x64.o fp_x64_asm.o fp_arm64.o fp_arm64_asm.o $(OBJECTS_ALL)
+	rm -f arith_test kex_test fp_generic.o fp_x64.o fp_x64_asm.o fp_arm64.o fp_arm64_asm.o generic/fp_generic.o $(OBJECTS_ALL)
 

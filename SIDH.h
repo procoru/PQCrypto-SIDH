@@ -61,6 +61,7 @@ extern "C" {
 #define TARGET_x86          2
 #define TARGET_ARM          3
 #define TARGET_ARM64        4
+#define TARGET_WASM         5
 
 #if defined(_AMD64_)
     #define TARGET TARGET_AMD64
@@ -94,6 +95,14 @@ extern "C" {
     typedef uint32_t        hdigit_t;
     #define NWORDS_FIELD    12
     #define p751_ZERO_WORDS 5
+#elif defined(_WASM_)
+    #define TARGET TARGET_WASM
+    #define RADIX           32
+    typedef uint32_t        digit_t;        // Unsigned 32-bit digit
+    typedef int32_t         sdigit_t;       // Signed 32-bit digit
+    typedef uint16_t        hdigit_t;       // Unsigned 16-bit digit
+    #define NWORDS_FIELD    24
+    #define p751_ZERO_WORDS 11
 #else
     #error -- "Unsupported ARCHITECTURE"
 #endif
